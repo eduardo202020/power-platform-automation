@@ -30,3 +30,8 @@ Para repetir: abrir AutomatizacionPrueba, pulsar Probar flujo y comprobar OK,
 el mensaje enviado, la fecha UTC y el ID. Una segunda llamada debe devolver
 otro mensaje e ID. El script Verify-ConnectionTest.ps1 comprueba publicacion
 y vinculacion; no pulsa el boton.
+
+Se realizo ademas una [prueba atendida desde PAD](PAD_APP_VERIFICATION.md):
+Run Power App abre la app existente y el usuario confirma OK desde esa ventana.
+La creacion de una app nueva por el puente PAD y la llamada a un subflujo local
+siguen sin verificarse.
