@@ -12,6 +12,9 @@ contrato [docs/INTERACTION_CONTRACT.md](docs/INTERACTION_CONTRACT.md).
 Para construir, importar o diagnosticar, lee la skill local
 [skills/power-platform-build/SKILL.md](skills/power-platform-build/SKILL.md).
 El detalle de comandos esta en [docs/BUILD_RUNBOOK.md](docs/BUILD_RUNBOOK.md).
+Para planificar o retomar mejoras, consulta
+[docs/FEATURE_ROADMAP.md](docs/FEATURE_ROADMAP.md): distingue pendientes de
+capacidades implementadas y no autoriza despliegues por sí mismo.
 
 ## Fuentes y cambios
 

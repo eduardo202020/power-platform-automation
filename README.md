@@ -4,6 +4,10 @@ Proyecto independiente para construir, revisar y transportar automatizaciones
 de Power Apps, Power Automate y PAD desde codigo, usando Power Platform CLI
 (`pac`). Los ejemplos son genericos y no dependen de `auto-tasacion`.
 
+El [registro de próximos features](docs/FEATURE_ROADMAP.md) conserva el orden
+de evolución y los criterios de aceptación. La próxima tarea es parametrizar
+identidades y entorno; las siguientes etapas todavía están pendientes.
+
 ## Contexto para agentes de IA
 
 Empieza por [AGENTS.md](AGENTS.md) y [contexto operativo](docs/AI_CONTEXT.md).

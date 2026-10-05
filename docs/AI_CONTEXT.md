@@ -75,6 +75,10 @@ consulta con `list-cloud-flows --workflow-id ... --json`.
 
 ## Continuar una tarea
 
+El orden de evolución está registrado en [FEATURE_ROADMAP.md](FEATURE_ROADMAP.md).
+La próxima tarea prevista es F01: parametrizar identidades y entorno. El
+roadmap describe trabajo pendiente; no representa funcionalidad ya disponible.
+
 Usa [BUILD_RUNBOOK.md](BUILD_RUNBOOK.md) para construir y desplegar,
 [INTERACTION_CONTRACT.md](INTERACTION_CONTRACT.md) para cambiar entradas/salidas
 y [TROUBLESHOOTING.md](TROUBLESHOOTING.md) para diagnosticar sin recrear recursos.
