@@ -1,0 +1,10 @@
+<fetch>
+  <entity name="workflow">
+    <attribute name="name" />
+    <attribute name="statecode" />
+    <attribute name="workflowid" />
+    <filter>
+      <condition attribute="workflowid" operator="eq" value="6e19f7d8-3550-48c2-a4d6-e9764302e973" />
+    </filter>
+  </entity>
+</fetch>

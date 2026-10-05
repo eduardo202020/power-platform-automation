@@ -1,0 +1,9 @@
+artifacts/*
+!artifacts/.gitkeep
+.env
+.env.*
+!.env.example
+*.log
+*.msapp
+*.zip
+*.nupkg

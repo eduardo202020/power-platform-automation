@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "processId": "smoke-test",
+  "scope": "Power Apps canvas -> Power Automate cloud -> respuesta",
+  "sources": {
+    "flow": "examples/smoke-test/flow.clientdata.json",
+    "canvasApp": "examples/smoke-test/canvas/App.fx.yaml",
+    "canvasScreen": "examples/smoke-test/canvas/Screen1.fx.yaml"
+  },
+  "identity": {
+    "solutionUniqueName": "AutomationConnectionTest",
+    "flowDisplayName": "AutomatizacionPruebaConexion",
+    "workflowId": "6e19f7d8-3550-48c2-a4d6-e9764302e973",
+    "appDisplayName": "AutomatizacionPrueba",
+    "appLogicalName": "autolab_automatizacionprueba",
+    "resourceIdResolution": "Consultar list-cloud-flows en el entorno por workflowId",
+    "appIdResolution": "Consultar canvasapp en el entorno por nombre logico"
+  },
+  "contract": {
+    "triggerType": "Request",
+    "triggerKind": "PowerAppV2",
+    "input": {"key": "text", "type": "string", "required": true},
+    "responseType": "Response",
+    "responseKind": "PowerApp",
+    "statusCode": 200,
+    "outputs": {"estado": "string", "mensaje": "string", "ejecucionid": "string", "fechautc": "string"}
+  },
+  "binding": {"workflowEntityId": "workflowId", "workflowName": "resourceId"},
+  "evidence": [
+    {"id": "api-publication", "source": "pac / Microsoft API", "status": "tool_verified", "date": "2026-10-05", "result": "App y flujo publicados; referencia verificada"},
+    {"id": "button-response", "source": "Respuesta del usuario en chat", "status": "user_confirmed", "date": "2026-10-05", "result": "muestra ok"},
+    {"id": "apps-list-visible", "source": "Respuesta del usuario en chat", "status": "user_confirmed", "date": "2026-10-05", "result": "ya aparecio"},
+    {"id": "run-id-correlation", "source": "pac list-flow-runs", "status": "unverified", "date": "2026-10-05", "result": "Consulta sin ejecuciones; no se correlaciono ID"}
+  ],
+  "limitations": ["pac canvas Experimental obsoleto", "Scripts fijan identidades del piloto y pac 2.12.2", "WADL europeo fijo", "Sin prueba automatizada de navegador", "Sin operaciones financieras"]
+}

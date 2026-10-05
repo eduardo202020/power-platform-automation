@@ -1,0 +1,4 @@
+App As appinfo:
+    OnStart: =Set(varEjecutando, false); Set(varError, ""); Set(varResultado, {estado:"", mensaje:"", ejecucionid:"", fechautc:""})
+    StartScreen: =Screen1
+    Theme: =PowerAppsTheme

@@ -1,0 +1,40 @@
+// Controles clasicos. Configuracion regional con separador decimal punto.
+// Agregar primero el flujo AutomatizacionPruebaConexion desde el panel Power Automate.
+
+// Screen1.OnVisible
+Set(varEjecutando, false);
+Set(varResultado, Blank());
+Set(varError, "")
+
+// txtMensaje.Default
+"Prueba automatizacion"
+
+// btnProbar.Text
+If(varEjecutando, "Ejecutando...", "Probar flujo")
+
+// btnProbar.DisplayMode
+If(varEjecutando || IsBlank(Trim(txtMensaje.Text)), DisplayMode.Disabled, DisplayMode.Edit)
+
+// btnProbar.OnSelect
+Set(varEjecutando, true);
+Set(varResultado, Blank());
+Set(varError, "");
+IfError(
+    Set(varResultado, AutomatizacionPruebaConexion.Run(Trim(txtMensaje.Text))),
+    Set(varError, Coalesce(FirstError.Message, "No se pudo ejecutar el flujo"))
+);
+Set(varEjecutando, false)
+
+// lblResultado.Text
+If(
+    varEjecutando,
+    "Esperando respuesta...",
+    !IsBlank(varError),
+    "ERROR: " & varError,
+    IsBlank(varResultado),
+    "Pulsa Probar flujo para comenzar",
+    "Estado: " & varResultado.estado & Char(10) &
+    "Mensaje: " & varResultado.mensaje & Char(10) &
+    "Ejecucion: " & varResultado.ejecucionid & Char(10) &
+    "Fecha UTC: " & varResultado.fechautc
+)

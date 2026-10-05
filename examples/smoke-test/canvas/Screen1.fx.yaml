@@ -1,0 +1,50 @@
+Screen1 As screen:
+    Fill: =RGBA(245, 247, 251, 1)
+
+    lblTitulo As Text:
+        Text: ="Prueba de automatizaciones"
+        Size: =28
+        Weight: ='TextCanvas.Weight'.Semibold
+        Height: =64
+        Width: =700
+        X: =40
+        Y: =32
+
+    lblDescripcion As Text:
+        Text: ="Pulsa el boton para enviar un mensaje de prueba a Power Automate."
+        Height: =60
+        Width: =700
+        X: =40
+        Y: =110
+
+    btnProbar As Button:
+        Text: =If(varEjecutando, "Ejecutando...", "Probar flujo")
+        DisplayMode: =If(varEjecutando, DisplayMode.Disabled, DisplayMode.Edit)
+        Height: =48
+        Width: =260
+        X: =40
+        Y: =190
+        OnSelect: |-
+            =Set(varEjecutando, true);
+            Set(varError, "");
+            Set(varResultado, {estado:"", mensaje:"", ejecucionid:"", fechautc:""});
+            Set(varMensaje, "PRUEBA-" & Text(GUID()));
+            IfError(
+                Set(varResultado, AutomatizacionPruebaConexion.Run(varMensaje)),
+                Set(varError, Coalesce(FirstError.Message, "No se pudo ejecutar el flujo"))
+            );
+            Set(varEjecutando, false)
+
+    lblResultado As Text:
+        Text: |-
+            =If(varEjecutando, "Esperando respuesta...",
+                !IsBlank(varError), "ERROR: " & varError,
+                IsBlank(varResultado.estado), "La prueba aun no se ha ejecutado.",
+                "Estado: " & varResultado.estado & Char(10) &
+                "Mensaje: " & varResultado.mensaje & Char(10) &
+                "Ejecucion: " & varResultado.ejecucionid & Char(10) &
+                "Fecha UTC: " & varResultado.fechautc)
+        Height: =270
+        Width: =700
+        X: =40
+        Y: =280

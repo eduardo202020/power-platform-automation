@@ -1,0 +1,61 @@
+{
+  "properties": {
+    "connectionReferences": {},
+    "definition": {
+      "$schema": "https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#",
+      "contentVersion": "1.0.0.0",
+      "parameters": {
+        "$connections": { "defaultValue": {}, "type": "Object" },
+        "$authentication": { "defaultValue": {}, "type": "SecureObject" }
+      },
+      "triggers": {
+        "manual": {
+          "type": "Request",
+          "kind": "PowerAppV2",
+          "inputs": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "text": {
+                  "title": "Mensaje",
+                  "type": "string",
+                  "x-ms-dynamically-added": true,
+                  "description": "Texto sintetico de la prueba",
+                  "x-ms-content-hint": "TEXT"
+                }
+              },
+              "required": ["text"]
+            }
+          }
+        }
+      },
+      "actions": {
+        "Responder_a_Power_Apps": {
+          "type": "Response",
+          "kind": "PowerApp",
+          "runAfter": {},
+          "inputs": {
+            "statusCode": 200,
+            "body": {
+              "estado": "OK",
+              "mensaje": "@triggerBody()?['text']",
+              "ejecucionid": "@workflow()?['run']?['name']",
+              "fechautc": "@utcNow()"
+            },
+            "schema": {
+              "type": "object",
+              "properties": {
+                "estado": { "title": "Estado", "type": "string", "x-ms-content-hint": "TEXT", "x-ms-dynamically-added": true },
+                "mensaje": { "title": "Mensaje", "type": "string", "x-ms-content-hint": "TEXT", "x-ms-dynamically-added": true },
+                "ejecucionid": { "title": "EjecucionId", "type": "string", "x-ms-content-hint": "TEXT", "x-ms-dynamically-added": true },
+                "fechautc": { "title": "FechaUtc", "type": "string", "x-ms-content-hint": "TEXT", "x-ms-dynamically-added": true }
+              }
+            }
+          }
+        }
+      },
+      "outputs": {}
+    }
+  },
+  "schemaVersion": "1.0.0.0"
+}
