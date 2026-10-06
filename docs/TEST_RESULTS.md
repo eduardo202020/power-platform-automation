@@ -3,6 +3,20 @@
 Fecha: 5 de octubre de 2026, America/Lima.
 Entorno: Personal Productivity.
 
+## Parametrizacion F01 (validacion local)
+
+Fecha: 6 de octubre de 2026, America/Lima.
+
+| Comprobacion | Evidencia | Resultado |
+| --- | --- | --- |
+| Separacion de identidades | Configuraciones versionadas para `smoke-test` y `smoke-test-secondary`, con IDs de flujo, app, conexion y solucion distintos | Correcto localmente |
+| Construccion del flujo principal | `Build-ConnectionTest.ps1` genero `AutomationConnectionTest.zip` desde una copia temporal | Correcto localmente |
+| Construccion del flujo secundario | `Build-ConnectionTest.ps1` genero `AutomationConnectionTestSecondary.zip`; el ZIP contiene solo el flujo secundario y no incluye CanvasApps | Correcto localmente |
+| Preservacion de la fuente | La solucion fuente `AutomationConnectionTest` mantuvo su nombre e identidades despues de ambas construcciones | Correcto localmente |
+| Validacion de contrato | `Validate-Harness.ps1` valido configuraciones, contrato, manifest, fuentes Power Fx, enlaces y sintaxis sin llamadas remotas | Correcto localmente |
+
+Esta evidencia no importa ni verifica la segunda configuracion en Microsoft Power Platform. Para ello falta crear un archivo local de entorno, importar el paquete secundario y ejecutar las comprobaciones remotas acotadas del runbook.
+
 | Comprobacion | Evidencia | Resultado |
 | --- | --- | --- |
 | Autenticacion Microsoft y acceso a Dataverse | pac selecciono el entorno y consulto datos | Correcto |

@@ -2,19 +2,10 @@
   "schemaVersion": 1,
   "processId": "smoke-test",
   "scope": "Power Apps canvas -> Power Automate cloud -> respuesta",
-  "sources": {
-    "flow": "examples/smoke-test/flow.clientdata.json",
-    "canvasApp": "examples/smoke-test/canvas/App.fx.yaml",
-    "canvasScreen": "examples/smoke-test/canvas/Screen1.fx.yaml"
-  },
-  "identity": {
-    "solutionUniqueName": "AutomationConnectionTest",
-    "flowDisplayName": "AutomatizacionPruebaConexion",
-    "workflowId": "6e19f7d8-3550-48c2-a4d6-e9764302e973",
-    "appDisplayName": "AutomatizacionPrueba",
-    "appLogicalName": "autolab_automatizacionprueba",
-    "resourceIdResolution": "Consultar list-cloud-flows en el entorno por workflowId",
-    "appIdResolution": "Consultar canvasapp en el entorno por nombre logico"
+  "automationConfig": "config/automations/smoke-test.json",
+  "identityResolution": {
+    "resourceId": "Consultar list-cloud-flows en el entorno por workflowId",
+    "appId": "Consultar canvasapp en el entorno por nombre logico"
   },
   "contract": {
     "triggerType": "Request",

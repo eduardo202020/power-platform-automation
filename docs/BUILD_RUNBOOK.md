@@ -27,13 +27,20 @@ uso inicialmente con publisher AutomationLab y prefijo autolab; no repetirlo
 sobre esta carpeta existente. Inicializar otra carpeta para un proyecto nuevo.
 
 ```powershell
+# Crear una configuracion de entorno local, excluida de Git.
+Copy-Item ./config/environments/development.example.json ./config/environments/development.local.json
+# Editar development.local.json con el entorno autorizado.
+
 # Fase 1: paquete e importacion del flujo.
-& ./scripts/Build-ConnectionTest.ps1
+powershell -ExecutionPolicy Bypass -File ./scripts/Build-ConnectionTest.ps1 `
+  -AutomationConfig config/automations/smoke-test.json
 pac solution import --environment '<ID_ENTORNO>' --path './artifacts/AutomationConnectionTest.zip'
 pac env fetch --environment '<ID_ENTORNO>' --xmlFile './examples/smoke-test/verify-flow.fetch.xml'
 
 # Fase 2: la construccion consulta el flujo YA existente en ese entorno.
-& ./scripts/Build-CanvasTest.ps1 -EnvironmentId '<ID_ENTORNO>'
+powershell -ExecutionPolicy Bypass -File ./scripts/Build-CanvasTest.ps1 `
+  -AutomationConfig config/automations/smoke-test.json `
+  -EnvironmentConfig config/environments/development.local.json
 pac solution import --environment '<ID_ENTORNO>' --path './artifacts/AutomationConnectionTest-with-app.zip'
 ```
 
@@ -50,12 +57,13 @@ reimportaciones mientras el proceso siga activo.
 
 ## Actualizacion de una construccion existente
 
-Editar las fuentes canonicas y reconstruir. `Build-ConnectionTest.ps1` borra
-los RootComponents del manifest y vuelve a registrar solo el flujo, con version
-1.0.0.0. `Build-CanvasTest.ps1` agrega la app y fija 1.0.0.1. Son generadores
-del piloto, no un gestor incremental de soluciones. Para recuperar el paquete
-combinado tras ejecutar el primero, ejecutar tambien el segundo. Inspeccionar
-el manifest antes de importar; no agregar otros componentes sin adaptar esto.
+Editar las fuentes canonicas y la configuracion de automatizacion, luego
+reconstruir. Los scripts trabajan sobre una copia en `artifacts/build/` y
+sustituyen solamente los componentes flujo/app de esa copia. Para recuperar el
+paquete combinado tras ejecutar el primero, ejecutar tambien el segundo.
+Inspeccionar el manifest generado antes de importar; los componentes fuera del
+alcance del piloto se conservan en la copia, pero esa conducta debe volver a
+probarse antes de ampliar una solucion real.
 
 Una reimportacion puede reemplazar la definicion activa del flujo existente.
 La version no aumenta automaticamente. Conservar un export previo cuando el
@@ -64,23 +72,24 @@ cambio de una app existente lo justifique; no importar para un cambio de docs.
 ## Verificacion
 
 ```powershell
-& ./scripts/Validate-Harness.ps1
-& ./scripts/Verify-ConnectionTest.ps1 -EnvironmentId '<ID_ENTORNO>' -AppId '<ID_APP>'
+powershell -ExecutionPolicy Bypass -File ./scripts/Validate-Harness.ps1
+powershell -ExecutionPolicy Bypass -File ./scripts/Verify-ConnectionTest.ps1 `
+  -AutomationConfig config/automations/smoke-test.json `
+  -EnvironmentConfig config/environments/development.local.json
 ```
 
-Consultar el ID real de app con FetchXML por `name=autolab_automatizacionprueba`
-o con herramientas de listado, filtrando el componente. `Verify` comprueba
-Published y los dos IDs de referencia. No abre el reproductor ni pulsa botones.
+`Verify` consulta el ID real de app mediante FetchXML filtrado por el nombre
+logico configurado; `-AppId` queda disponible como alternativa puntual.
+Comprueba Published y los dos IDs de referencia. No abre el reproductor ni pulsa botones.
 Abrir la app, pulsar Probar flujo y registrar OK o error. Contrastar mensaje,
 fecha e ID con el historial si estan disponibles. Un historial CLI vacio no
 desmiente una prueba de UI confirmada.
 
 ## Portabilidad actual
 
-Los scripts fijan pac 2.12.2, rutas LOCALAPPDATA Windows, identidades del piloto,
-versiones de metadatos y endpoint WADL `europe-001`. Verificar/adaptar esos
-valores antes de otro entorno o region. Verify fija el AppId original como
-default: pasar el ID consultado en otro despliegue.
+La version de pac y las identidades viven en la configuracion de automatizacion.
+La region WADL, ruta opcional de pac y destino viven en la configuracion de
+entorno local. Revisar ambos archivos antes de construir otro caso o region.
 
 `Deploy-SmokeTest.ps1` es una alternativa Dataverse que requiere solucion
 existente y token de audiencia correcta; no fue la ruta usada en el piloto.

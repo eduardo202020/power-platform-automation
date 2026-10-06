@@ -1,6 +1,6 @@
 # Registro de próximos features
 
-Actualizado: 5 de octubre de 2026, America/Lima.
+Actualizado: 6 de octubre de 2026, America/Lima.
 Propósito: conservar el orden de evolución y el punto de reanudación del
 proyecto. Los features descritos están pendientes; este registro no inicia
 su implementación ni autoriza despliegues adicionales.
@@ -21,7 +21,7 @@ consultar un flujo previamente importado. No es aún un generador general.
 
 | Orden | ID | Feature | Estado | Dependencia |
 | --- | --- | --- | --- | --- |
-| 1 | F01 | Parametrizar identidades y entorno | Próximo a iniciar | Piloto actual |
+| 1 | F01 | Parametrizar identidades y entorno | En curso: configuración y validación local implementadas | Piloto actual |
 | 2 | F02 | Mejorar construcción y validación | Pendiente | F01 |
 | 3 | F03 | Probar una integración real | Pendiente; integración por elegir | F02 y acceso autorizado |
 | 4 | F04 | Generalizar referencias y variables | Pendiente | Contrato y experiencia de F03 |
@@ -52,6 +52,12 @@ Criterios de aceptación: una segunda configuración produce nombres e
 identidades propios; los scripts no dependen del AppId original para consultar
 otra app; el piloto mantiene su identidad y contrato. Registrar por separado
 lo comprobado localmente y lo comprobado en Microsoft.
+
+Evidencia local del 6 de octubre de 2026: se agregaron configuraciones
+versionadas para el piloto y una segunda identidad, una plantilla de entorno
+sin secretos y validación que rechaza identidades duplicadas. Los paquetes se
+generan desde una copia en `artifacts/build/`. Falta importar y verificar la
+segunda configuración en un entorno autorizado; F01 permanece en curso.
 
 ## F02 — Mejorar construcción y validación
 

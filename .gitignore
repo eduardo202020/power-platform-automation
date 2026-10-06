@@ -3,6 +3,7 @@ artifacts/*
 .env
 .env.*
 !.env.example
+config/environments/*.local.json
 *.log
 *.msapp
 *.zip

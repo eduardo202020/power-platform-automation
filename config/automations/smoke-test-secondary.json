@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "automationId": "smoke-test-secondary",
+  "isTemplate": false,
+  "tooling": {
+    "pacVersion": "2.12.2"
+  },
+  "sources": {
+    "flow": "examples/smoke-test/flow.clientdata.json",
+    "canvasDirectory": "examples/smoke-test/canvas",
+    "solutionTemplate": "solutions/AutomationConnectionTest/src",
+    "flowReferenceInCanvas": "AutomatizacionPruebaConexion"
+  },
+  "solution": {
+    "uniqueName": "AutomationConnectionTestSecondary",
+    "displayName": "AutomationConnectionTestSecondary",
+    "version": "1.0.0.0",
+    "publisher": {
+      "uniqueName": "AutomationLabSecondary",
+      "displayName": "AutomationLabSecondary",
+      "prefix": "autolab2",
+      "optionValuePrefix": 44912
+    }
+  },
+  "flow": {
+    "displayName": "AutomatizacionPruebaConexionSecundaria",
+    "workflowId": "4d39dbdf-9ac6-4e08-9e5e-1dfcc743abc9"
+  },
+  "app": {
+    "displayName": "AutomatizacionPruebaSecundaria",
+    "logicalName": "autolab2_automatizacionpruebasecundaria",
+    "manifestId": "6e70bd31-772d-44f8-9e8f-860c76e44701",
+    "connectionId": "f21bbfe6-3eee-4e45-a5ef-22e787490ed3"
+  }
+}

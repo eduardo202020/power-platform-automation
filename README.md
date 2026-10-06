@@ -5,8 +5,8 @@ de Power Apps, Power Automate y PAD desde codigo, usando Power Platform CLI
 (`pac`). Los ejemplos son genericos y no dependen de `auto-tasacion`.
 
 El [registro de próximos features](docs/FEATURE_ROADMAP.md) conserva el orden
-de evolución y los criterios de aceptación. La próxima tarea es parametrizar
-identidades y entorno; las siguientes etapas todavía están pendientes.
+de evolución y los criterios de aceptación. La parametrización de identidades
+y entorno está en curso; las siguientes etapas todavía están pendientes.
 
 ## Contexto para agentes de IA
 
@@ -17,6 +17,10 @@ El harness incluye un [runbook de construccion](docs/BUILD_RUNBOOK.md), el
 [especificacion legible por maquinas](docs/automation-spec.json) y una
 [skill local](skills/power-platform-build/SKILL.md). La skill se descubre
 desde AGENTS.md; no necesita una instalacion global.
+
+Las identidades versionadas y las plantillas de entorno se describen en
+[CONFIGURATION.md](docs/CONFIGURATION.md). Ninguna de ellas guarda tokens ni
+credenciales.
 
 ```powershell
 & ./scripts/Validate-Harness.ps1
@@ -29,6 +33,7 @@ Esta comprobacion valida coherencia local y enlaces sin tocar Microsoft.
 ```text
 power-platform-automation/
   examples/smoke-test/    # Primera prueba: app -> flujo -> respuesta
+  config/                 # Identidades versionadas y plantillas de entorno
   scripts/               # Instalacion y comprobacion local de pac
   solutions/             # Fuentes desempaquetadas de soluciones
   artifacts/             # Exportaciones locales, excluidas de Git
@@ -85,14 +90,17 @@ Power Apps -> Power Automate -> Power Apps funciona. Consulta los
 de UI de las comprobaciones por API.
 
 Las fuentes de la solucion estan en `solutions/AutomationConnectionTest/src`.
-Para reconstruir el paquete local con la definicion del ejemplo:
+Los generadores las copian a `artifacts/build/` antes de generar un paquete;
+no modifican las fuentes versionadas. Para reconstruir el paquete local con la
+definicion del ejemplo:
 
 ```powershell
-& ./scripts/Build-ConnectionTest.ps1
+powershell -ExecutionPolicy Bypass -File ./scripts/Build-ConnectionTest.ps1
 # El flujo debe existir remotamente antes de construir la app:
 pac solution import --environment '<ID_ENTORNO>' --path './artifacts/AutomationConnectionTest.zip'
 # Construir tambien la app nativa (resuelve el flujo en el entorno):
-& ./scripts/Build-CanvasTest.ps1 -EnvironmentId '<ID_ENTORNO>'
+powershell -ExecutionPolicy Bypass -File ./scripts/Build-CanvasTest.ps1 `
+  -EnvironmentConfig config/environments/development.local.json
 ```
 
 Para importarlo en un entorno autorizado y verificar exclusivamente este flujo:
@@ -102,7 +110,8 @@ pac solution import --environment '<ID_ENTORNO>' --path './artifacts/AutomationC
 pac env fetch --environment '<ID_ENTORNO>' --xmlFile './examples/smoke-test/verify-flow.fetch.xml'
 # El paquete que incluye la app se importa por separado:
 pac solution import --environment '<ID_ENTORNO>' --path './artifacts/AutomationConnectionTest-with-app.zip'
-& ./scripts/Verify-ConnectionTest.ps1 -EnvironmentId '<ID_ENTORNO>'
+powershell -ExecutionPolicy Bypass -File ./scripts/Verify-ConnectionTest.ps1 `
+  -EnvironmentConfig config/environments/development.local.json
 ```
 
 Una reimportacion actualiza el flujo de prueba existente. No ejecutar contra

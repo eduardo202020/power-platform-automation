@@ -2,11 +2,24 @@
 param()
 $ErrorActionPreference = 'Stop'
 $root = Split-Path -Parent $PSScriptRoot
+Import-Module (Join-Path $PSScriptRoot 'AutomationConfig.psm1') -Force
 $spec = Get-Content (Join-Path $root 'docs/automation-spec.json') -Raw -Encoding UTF8 | ConvertFrom-Json
-foreach ($source in $spec.sources.PSObject.Properties.Value) {
-    if (-not (Test-Path -LiteralPath (Join-Path $root $source) -PathType Leaf)) { throw "Fuente ausente: $source" }
+$automation = Get-AutomationConfig -Path $spec.automationConfig -Root $root
+foreach ($configFile in (Get-ChildItem -LiteralPath (Join-Path $root 'config/automations') -Filter '*.json' -File)) {
+    $rootPrefix = ([IO.Path]::GetFullPath($root).TrimEnd([IO.Path]::DirectorySeparatorChar, [IO.Path]::AltDirectorySeparatorChar) + [IO.Path]::DirectorySeparatorChar)
+    $relativePath = $configFile.FullName.Substring($rootPrefix.Length).Replace('\', '/')
+    $candidate = Get-AutomationConfig -Path $relativePath -Root $root -AllowTemplate
+    if (-not $candidate.isTemplate -and $candidate.automationId -ne $automation.automationId) {
+        if ($candidate.solution.uniqueName -eq $automation.solution.uniqueName -or
+            $candidate.flow.workflowId -eq $automation.flow.workflowId -or
+            $candidate.app.logicalName -eq $automation.app.logicalName -or
+            $candidate.app.manifestId -eq $automation.app.manifestId -or
+            $candidate.app.connectionId -eq $automation.app.connectionId) {
+            throw "La configuracion '$relativePath' reutiliza una identidad estable del piloto."
+        }
+    }
 }
-$flow = Get-Content (Join-Path $root $spec.sources.flow) -Raw -Encoding UTF8 | ConvertFrom-Json
+$flow = Get-Content (Resolve-RepositoryPath -Root $root -Path $automation.sources.flow -MustExist) -Raw -Encoding UTF8 | ConvertFrom-Json
 $trigger = $flow.properties.definition.triggers.manual
 if ($trigger.type -ne $spec.contract.triggerType -or $trigger.kind -ne $spec.contract.triggerKind) { throw 'El disparador difiere del contrato.' }
 $inputKey = $spec.contract.input.key
@@ -16,18 +29,24 @@ if ($response.type -ne $spec.contract.responseType -or $response.kind -ne $spec.
 $expectedOutputs = @($spec.contract.outputs.PSObject.Properties.Name | Sort-Object)
 $actualOutputs = @($response.inputs.schema.properties.PSObject.Properties.Name | Sort-Object)
 if (Compare-Object $expectedOutputs $actualOutputs) { throw 'Las salidas del flujo difieren del contrato.' }
-$screen = Get-Content (Join-Path $root $spec.sources.canvasScreen) -Raw -Encoding UTF8
-$app = Get-Content (Join-Path $root $spec.sources.canvasApp) -Raw -Encoding UTF8
+$screen = Get-Content (Join-Path (Resolve-RepositoryPath -Root $root -Path $automation.sources.canvasDirectory -MustExist) 'Screen1.fx.yaml') -Raw -Encoding UTF8
+$app = Get-Content (Join-Path (Resolve-RepositoryPath -Root $root -Path $automation.sources.canvasDirectory -MustExist) 'App.fx.yaml') -Raw -Encoding UTF8
 foreach ($field in $expectedOutputs) {
     if ($response.inputs.schema.properties.$field.type -ne $spec.contract.outputs.$field -or $field -notin $response.inputs.body.PSObject.Properties.Name) { throw "Salida inconsistente: $field" }
     if ($screen -notmatch ('varResultado\.' + [regex]::Escape($field) + '\b') -or $app -notmatch ('\b' + [regex]::Escape($field) + '\s*:')) { throw "La app no consume/inicializa la salida: $field" }
 }
-if ($screen -notmatch ([regex]::Escape($spec.identity.flowDisplayName) + '\.Run\(')) { throw 'La app llama a una fuente distinta.' }
-$solutionPath = Join-Path $root 'solutions/AutomationConnectionTest/src/Other/Solution.xml'
+if ($screen -notmatch ([regex]::Escape($automation.flow.displayName) + '\.Run\(')) { throw 'La app llama a una fuente distinta.' }
+$solutionPath = Join-Path (Resolve-RepositoryPath -Root $root -Path $automation.sources.solutionTemplate -MustExist) 'Other/Solution.xml'
 [xml]$solution = Get-Content $solutionPath -Raw
-if ($solution.ImportExportXml.SolutionManifest.UniqueName -ne $spec.identity.solutionUniqueName) { throw 'Nombre unico de solucion inconsistente.' }
-$flowComponent = @($solution.SelectNodes('//RootComponent[@type="29"]') | Where-Object { $_.id.Trim('{}') -eq $spec.identity.workflowId })
+if ($solution.ImportExportXml.SolutionManifest.UniqueName -ne $automation.solution.uniqueName) { throw 'Nombre unico de solucion inconsistente.' }
+$flowComponent = @($solution.SelectNodes('//RootComponent[@type="29"]') | Where-Object { $_.id.Trim('{}') -eq $automation.flow.workflowId })
 if ($flowComponent.Count -ne 1) { throw 'El manifest no contiene exactamente el flujo del contrato.' }
+foreach ($scriptName in @('Build-CanvasTest.ps1', 'Build-ConnectionTest.ps1', 'Verify-ConnectionTest.ps1')) {
+    $scriptContent = Get-Content (Join-Path $root "scripts/$scriptName") -Raw -Encoding UTF8
+    if ($scriptContent -match '6e19f7d8-3550-48c2-a4d6-e9764302e973|5ff47c3f-6729-4fed-867a-682f1b04d639') {
+        throw "$scriptName conserva una identidad remota fijada del piloto."
+    }
+}
 $skillPath = Join-Path $root 'skills/power-platform-build/SKILL.md'
 $skill = Get-Content $skillPath -Raw -Encoding UTF8
 if ($skill -notmatch '(?s)^---\r?\nname: power-platform-build\r?\ndescription: .+?\r?\n---') { throw 'Frontmatter de skill incompleto.' }
@@ -45,4 +64,4 @@ foreach ($script in (Get-ChildItem -LiteralPath (Join-Path $root 'scripts') -Fil
     $null = [Management.Automation.Language.Parser]::ParseFile($script.FullName,[ref]$tokens,[ref]$errors)
     if ($errors.Count) { throw "Sintaxis invalida: $($script.Name)" }
 }
-Write-Output 'Harness valido: contrato, fuentes Power Fx, manifest, skill, enlaces y sintaxis PowerShell. Sin llamadas remotas.'
+Write-Output 'Harness valido: configuraciones, contrato, fuentes Power Fx, manifest, skill, enlaces y sintaxis PowerShell. Sin llamadas remotas.'

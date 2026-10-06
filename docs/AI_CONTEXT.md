@@ -47,20 +47,19 @@ sequenceDiagram
 | `scripts/Build-CanvasTest.ps1` | Resolver flujo remoto, generar app, WADL y paquete combinado |
 | `scripts/Verify-ConnectionTest.ps1` | Leer publicacion y comprobar referencia app-flujo |
 | `scripts/Validate-Harness.ps1` | Coherencia local de contrato, fuentes y documentos |
+| `config/automations/` | Identidades y fuentes versionadas de cada automatización. |
+| `config/environments/` | Plantillas de entorno; los valores locales permanecen fuera de Git. |
 | `docs/automation-spec.json` | Inventario legible por maquinas y evidencia del piloto |
 | `docs/TEST_RESULTS.md` | Evidencia humana y por API, con limites |
 
 ## Identidades
 
-El nombre visible no es la clave de integracion. El nombre unico de solucion
-es `AutomationConnectionTest`; el flujo visible es `AutomatizacionPruebaConexion`;
-la app visible es `AutomatizacionPrueba`; su nombre logico es
-`autolab_automatizacionprueba`. Los generadores fijan la identidad del piloto.
-
-El ID de app usado en `Verify-ConnectionTest.ps1` es el del despliegue original.
-En otro entorno puede cambiar: consultar `canvasapp` y pasar `-AppId`.
-Tambien puede cambiar el resourceId del flujo; `Build-CanvasTest.ps1` lo
-consulta con `list-cloud-flows --workflow-id ... --json`.
+El nombre visible no es la clave de integracion. Las identidades estables del
+piloto viven en `config/automations/smoke-test.json`; los scripts reciben una
+ruta de configuracion y no fijan su GUID ni el AppId de un despliegue previo.
+`Verify-ConnectionTest.ps1` resuelve la app por nombre logico si no se entrega
+`-AppId`. `Build-CanvasTest.ps1` consulta el `resourceId` del flujo mediante
+su `workflowId` en el entorno configurado.
 
 ## Hechos, decisiones e incertidumbres
 
@@ -76,8 +75,8 @@ consulta con `list-cloud-flows --workflow-id ... --json`.
 ## Continuar una tarea
 
 El orden de evolución está registrado en [FEATURE_ROADMAP.md](FEATURE_ROADMAP.md).
-La próxima tarea prevista es F01: parametrizar identidades y entorno. El
-roadmap describe trabajo pendiente; no representa funcionalidad ya disponible.
+F01 está en curso: la configuración y la validación local ya existen; queda
+probar una segunda configuración en Microsoft antes de declararla completada.
 
 Usa [BUILD_RUNBOOK.md](BUILD_RUNBOOK.md) para construir y desplegar,
 [INTERACTION_CONTRACT.md](INTERACTION_CONTRACT.md) para cambiar entradas/salidas

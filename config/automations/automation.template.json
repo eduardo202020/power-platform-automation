@@ -1,0 +1,35 @@
+{
+  "schemaVersion": 1,
+  "automationId": "my-automation",
+  "isTemplate": true,
+  "tooling": {
+    "pacVersion": "2.12.2"
+  },
+  "sources": {
+    "flow": "examples/smoke-test/flow.clientdata.json",
+    "canvasDirectory": "examples/smoke-test/canvas",
+    "solutionTemplate": "solutions/AutomationConnectionTest/src",
+    "flowReferenceInCanvas": "AutomatizacionPruebaConexion"
+  },
+  "solution": {
+    "uniqueName": "MyAutomationSolution",
+    "displayName": "My Automation Solution",
+    "version": "1.0.0.0",
+    "publisher": {
+      "uniqueName": "MyAutomationPublisher",
+      "displayName": "My Automation Publisher",
+      "prefix": "myauto",
+      "optionValuePrefix": 50000
+    }
+  },
+  "flow": {
+    "displayName": "MyAutomationFlow",
+    "workflowId": "e5d6c902-53f0-44cb-a401-7cf056717f42"
+  },
+  "app": {
+    "displayName": "MyAutomationApp",
+    "logicalName": "myauto_myautomationapp",
+    "manifestId": "82f2ddca-f7f3-48e7-b9eb-01c78b30c843",
+    "connectionId": "b4cb3944-18da-4116-b29c-e1341004886e"
+  }
+}
